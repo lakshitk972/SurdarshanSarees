@@ -66,7 +66,7 @@ export function ProductCard({ product }: ProductCardProps) {
       >
         <div className="relative overflow-hidden mb-4 bg-offwhite rounded-md h-80">
           <img 
-            src={product.imageUrls[0]} 
+            src={product.imageUrls?.[0] || '/placeholder-image.jpg'} 
             alt={product.name} 
             className="product-image w-full h-full object-cover"
           />
@@ -103,10 +103,8 @@ export function ProductCard({ product }: ProductCardProps) {
           </motion.div>
         </div>
         <div>
-          <Link href={`/product/${product.slug}`}>
-            <a className="font-playfair text-lg font-medium hover:text-maroon transition-colors">
-              {product.name}
-            </a>
+          <Link href={`/product/${product.slug}`} className="font-playfair text-lg font-medium hover:text-maroon transition-colors">
+            {product.name}
           </Link>
           <div className="flex justify-between items-center mt-2">
             <p className="font-montserrat text-maroon font-semibold">
@@ -142,7 +140,7 @@ export function ProductCard({ product }: ProductCardProps) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="overflow-hidden rounded-md">
               <img
-                src={product.imageUrls[0]}
+                src={product.imageUrls?.[0] || '/placeholder-image.jpg'}
                 alt={product.name}
                 className="w-full h-auto object-cover"
               />
@@ -177,7 +175,7 @@ export function ProductCard({ product }: ProductCardProps) {
                   className="w-1/2 border-maroon text-maroon hover:bg-maroon hover:text-white"
                 >
                   <Link href={`/product/${product.slug}`}>
-                    <a>View Details</a>
+                    View Details
                   </Link>
                 </Button>
               </div>

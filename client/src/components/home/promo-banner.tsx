@@ -23,15 +23,11 @@ export function PromoBanner() {
               Celebrate your special day with our bespoke bridal creations. Our master craftsmen bring your dream outfit to life with exquisite detailing and personalized design consultations.
             </p>
             <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-              <Link href="/custom-order">
-                <a className="inline-block bg-white text-maroon hover:bg-offwhite px-6 py-3 rounded-sm font-medium transition-colors text-center">
-                  Book Consultation
-                </a>
+              <Link href="/custom-order" className="inline-block bg-white text-maroon hover:bg-offwhite px-6 py-3 rounded-sm font-medium transition-colors text-center">
+                Book Consultation
               </Link>
-              <Link href="/products/designer-lehengas">
-                <a className="inline-block border border-white text-white hover:bg-white/10 px-6 py-3 rounded-sm font-medium transition-colors text-center">
-                  View Gallery
-                </a>
+              <Link href="/products/designer-lehengas" className="inline-block border border-white text-white hover:bg-white/10 px-6 py-3 rounded-sm font-medium transition-colors text-center">
+                View Gallery
               </Link>
             </div>
           </motion.div>

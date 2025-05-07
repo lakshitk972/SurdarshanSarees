@@ -1,0 +1,127 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600&family=Cormorant+Garamond:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 36 33% 97%;
+  --foreground: 20 14.3% 4.1%;
+  --muted: 60 4.8% 95.9%;
+  --muted-foreground: 25 5.3% 44.7%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 20 14.3% 4.1%;
+  --card: 0 0% 100%;
+  --card-foreground: 20 14.3% 4.1%;
+  --border: 20 5.9% 90%;
+  --input: 20 5.9% 90%;
+  --primary: 345 100% 25%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 43 65% 52%;
+  --secondary-foreground: 24 9.8% 10%;
+  --accent: 43 65% 52%;
+  --accent-foreground: 24 9.8% 10%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 60 9.1% 97.8%;
+  --ring: 345 100% 25%;
+  --radius: 0.5rem;
+
+  /* Custom theme colors */
+  --maroon: #800020;
+  --maroon-light: #A6284B;
+  --maroon-dark: #5A001B;
+  --gold: #D4AF37;
+  --gold-light: #E5C867;
+  --gold-dark: #B39020;
+  --offwhite: #F8F5F0;
+  --charcoal: #333333;
+  --chart-1: 345 100% 25%;
+  --chart-2: 43 65% 52%;
+  --chart-3: 150 73% 20%;
+  --chart-4: 210 100% 40%;
+  --chart-5: 275 100% 30%;
+}
+
+.dark {
+  --background: 20 14.3% 4.1%;
+  --foreground: 60 9.1% 97.8%;
+  --muted: 12 6.5% 15.1%;
+  --muted-foreground: 24 5.4% 63.9%;
+  --popover: 20 14.3% 4.1%;
+  --popover-foreground: 60 9.1% 97.8%;
+  --card: 20 14.3% 4.1%;
+  --card-foreground: 60 9.1% 97.8%;
+  --border: 12 6.5% 15.1%;
+  --input: 12 6.5% 15.1%;
+  --primary: 345 100% 25%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 43 65% 52%;
+  --secondary-foreground: 24 9.8% 10%;
+  --accent: 43 65% 52%;
+  --accent-foreground: 24 9.8% 10%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 0 0% 98%;
+  --ring: 345 100% 25%;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-montserrat antialiased bg-offwhite text-charcoal;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-playfair;
+  }
+}
+
+@layer components {
+  .header-nav-item {
+    @apply relative font-montserrat text-charcoal hover:text-maroon py-2;
+  }
+
+  .header-nav-item::after {
+    @apply content-[''] block w-0 h-0.5 bg-gold transition-all duration-300;
+  }
+
+  .header-nav-item:hover::after {
+    @apply w-full;
+  }
+
+  .product-card {
+    @apply overflow-hidden;
+  }
+  
+  /* Use the group class directly in HTML instead of applying it through CSS */
+
+  .product-card:hover .product-image {
+    @apply scale-105 transition-transform duration-500;
+  }
+
+  .product-image {
+    @apply transition-transform duration-500;
+  }
+
+  .slider-pagination .active {
+    @apply bg-maroon w-3 rounded;
+  }
+
+  .btn-primary {
+    @apply bg-maroon hover:bg-maroon-dark text-white px-6 py-3 rounded-sm font-medium transition-colors hover:shadow-lg;
+  }
+
+  .btn-secondary {
+    @apply border-2 border-maroon text-maroon hover:bg-maroon hover:text-white px-6 py-3 font-medium rounded-sm transition-colors;
+  }
+
+  .btn-outline {
+    @apply border border-white text-white hover:bg-white/10 px-6 py-3 rounded-sm font-medium transition-colors;
+  }
+
+  .price-range-slider::-webkit-slider-thumb {
+    @apply appearance-none w-5 h-5 rounded-full bg-maroon cursor-pointer border-2 border-offwhite;
+  }
+}

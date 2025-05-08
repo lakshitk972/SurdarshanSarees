@@ -13,8 +13,12 @@ import { SlidersHorizontal, X } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 export default function ProductsPage() {
-  const [location, params] = useLocation();
-  const categorySlug = params?.category;
+  const [location] = useLocation();
+  // Extract the category slug from the URL path
+  const categorySlug = location.includes('/products/') 
+    ? location.split('/products/')[1].split('?')[0] 
+    : '';
+  
   const searchParams = new URLSearchParams(window.location.search);
   const searchQuery = searchParams.get("search") || "";
   

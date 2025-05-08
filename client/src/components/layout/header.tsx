@@ -14,9 +14,7 @@ import {
   ShoppingBag,
   Heart,
   User,
-  LogOut,
-  Phone,
-  Mail
+  LogOut
 } from "lucide-react";
 
 export function Header() {
@@ -41,17 +39,7 @@ export function Header() {
     <header className="bg-white shadow-md sticky top-0 z-50">
       <div className="container mx-auto px-4 py-2">
         {/* Top bar */}
-        <div className="hidden md:flex justify-between items-center py-2 border-b border-gray-200">
-          <div className="flex items-center space-x-4">
-            <a href="tel:+919876543210" className="text-sm text-gray-600 hover:text-maroon flex items-center">
-              <Phone className="h-4 w-4 mr-2 text-gold" />
-              +91 98765 43210
-            </a>
-            <a href="mailto:contact@surdharshansilks.com" className="text-sm text-gray-600 hover:text-maroon flex items-center">
-              <Mail className="h-4 w-4 mr-2 text-gold" />
-              contact@surdharshansilks.com
-            </a>
-          </div>
+        <div className="hidden md:flex justify-end items-center py-2 border-b border-gray-200">
           <div className="flex items-center space-x-6">
             <a href="#" className="text-sm text-gray-600 hover:text-maroon">Track Order</a>
             <a href="#" className="text-sm text-gray-600 hover:text-maroon">Store Locator</a>

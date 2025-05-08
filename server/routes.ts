@@ -11,7 +11,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Product routes
   app.get("/api/products", async (req, res) => {
-    const { category, featured, minPrice, maxPrice, search } = req.query;
+    const { category, featured, minPrice, maxPrice, search, fabric, workDetails } = req.query;
     
     const filters: any = {};
     
@@ -33,6 +33,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
     
     if (search) {
       filters.search = search as string;
+    }
+    
+    if (fabric) {
+      filters.fabric = fabric as string;
+    }
+    
+    if (workDetails) {
+      filters.workDetails = workDetails as string;
     }
     
     const products = await storage.getProducts(filters);

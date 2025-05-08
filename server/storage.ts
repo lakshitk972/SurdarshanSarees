@@ -160,6 +160,8 @@ export class DatabaseStorage implements IStorage {
     minPrice?: number;
     maxPrice?: number;
     search?: string;
+    fabric?: string;
+    workDetails?: string;
   }): Promise<Product[]> {
     let query = db.select().from(products);
 
@@ -189,6 +191,14 @@ export class DatabaseStorage implements IStorage {
 
       if (filters.search) {
         query = query.where(like(products.name, `%${filters.search}%`));
+      }
+      
+      if (filters.fabric) {
+        query = query.where(like(products.fabric, `%${filters.fabric}%`));
+      }
+      
+      if (filters.workDetails) {
+        query = query.where(like(products.workDetails, `%${filters.workDetails}%`));
       }
     }
 

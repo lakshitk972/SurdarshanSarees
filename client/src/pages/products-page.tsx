@@ -28,6 +28,8 @@ export default function ProductsPage() {
     minPrice: 5000,
     maxPrice: 50000,
     search: searchQuery,
+    fabric: "",
+    workDetails: "",
   });
   
   // Update active filters when URL params change
@@ -64,6 +66,14 @@ export default function ProductsPage() {
       params.append("search", activeFilters.search);
     }
     
+    if (activeFilters.fabric) {
+      params.append("fabric", activeFilters.fabric);
+    }
+    
+    if (activeFilters.workDetails) {
+      params.append("workDetails", activeFilters.workDetails);
+    }
+    
     return params.toString();
   };
   
@@ -84,6 +94,8 @@ export default function ProductsPage() {
     category?: string;
     minPrice?: number;
     maxPrice?: number;
+    fabric?: string;
+    workDetails?: string;
   }) => {
     setActiveFilters(prev => ({
       ...prev,
@@ -98,6 +110,8 @@ export default function ProductsPage() {
       minPrice: 5000,
       maxPrice: 50000,
       search: "",
+      fabric: "",
+      workDetails: "",
     });
     
     // Reset URL to products without category
@@ -169,11 +183,13 @@ export default function ProductsPage() {
               {(activeFilters.category || 
                 activeFilters.minPrice !== 5000 || 
                 activeFilters.maxPrice !== 50000 || 
-                activeFilters.search) && (
-                <div className="flex items-center mt-2">
-                  <span className="text-sm text-gray-500 mr-2">Active filters:</span>
+                activeFilters.search ||
+                activeFilters.fabric ||
+                activeFilters.workDetails) && (
+                <div className="flex flex-wrap items-center mt-2">
+                  <span className="text-sm text-gray-500 mr-2 mb-2">Active filters:</span>
                   {activeFilters.category && (
-                    <span className="inline-flex items-center bg-maroon/10 text-maroon text-xs rounded-full px-3 py-1 mr-2">
+                    <span className="inline-flex items-center bg-maroon/10 text-maroon text-xs rounded-full px-3 py-1 mr-2 mb-2">
                       Category: {categories.find(c => c.slug === activeFilters.category)?.name || activeFilters.category}
                       <button
                         onClick={() => handleFilterChange({ category: "" })}
@@ -185,7 +201,7 @@ export default function ProductsPage() {
                   )}
                   
                   {(activeFilters.minPrice !== 5000 || activeFilters.maxPrice !== 50000) && (
-                    <span className="inline-flex items-center bg-maroon/10 text-maroon text-xs rounded-full px-3 py-1 mr-2">
+                    <span className="inline-flex items-center bg-maroon/10 text-maroon text-xs rounded-full px-3 py-1 mr-2 mb-2">
                       Price: ₹{activeFilters.minPrice.toLocaleString()} - ₹{activeFilters.maxPrice.toLocaleString()}
                       <button
                         onClick={() => handleFilterChange({ minPrice: 5000, maxPrice: 50000 })}
@@ -197,7 +213,7 @@ export default function ProductsPage() {
                   )}
                   
                   {activeFilters.search && (
-                    <span className="inline-flex items-center bg-maroon/10 text-maroon text-xs rounded-full px-3 py-1 mr-2">
+                    <span className="inline-flex items-center bg-maroon/10 text-maroon text-xs rounded-full px-3 py-1 mr-2 mb-2">
                       Search: {activeFilters.search}
                       <button
                         onClick={() => {
@@ -211,9 +227,33 @@ export default function ProductsPage() {
                     </span>
                   )}
                   
+                  {activeFilters.fabric && (
+                    <span className="inline-flex items-center bg-maroon/10 text-maroon text-xs rounded-full px-3 py-1 mr-2 mb-2">
+                      Fabric: {activeFilters.fabric}
+                      <button
+                        onClick={() => handleFilterChange({ fabric: "" })}
+                        className="ml-1 text-maroon hover:text-maroon-dark"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </span>
+                  )}
+                  
+                  {activeFilters.workDetails && (
+                    <span className="inline-flex items-center bg-maroon/10 text-maroon text-xs rounded-full px-3 py-1 mr-2 mb-2">
+                      Work Details: {activeFilters.workDetails}
+                      <button
+                        onClick={() => handleFilterChange({ workDetails: "" })}
+                        className="ml-1 text-maroon hover:text-maroon-dark"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </span>
+                  )}
+                  
                   <button
                     onClick={handleResetFilters}
-                    className="text-xs text-gray-500 hover:text-maroon underline"
+                    className="text-xs text-gray-500 hover:text-maroon underline mb-2"
                   >
                     Clear all
                   </button>

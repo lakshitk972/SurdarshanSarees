@@ -69,7 +69,7 @@ export default function ProductsPage() {
     isLoading,
     isError,
   } = useQuery<Product[]>({
-    queryKey: [`/api/products?${buildQueryString()}`],
+    queryKey: ['/api/products', buildQueryString()],
   });
   
   // Get current category name

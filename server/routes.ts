@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
-import { storage } from "./storage";
-import { setupAuth } from "./auth";
+import { storage } from "./storage-mongo";
+import { setupAuth } from "./auth-mongo";
 import { insertProductSchema, insertCartItemSchema, insertCustomOrderRequestSchema } from "@shared/schema";
 import { z } from "zod";
 
@@ -75,7 +75,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       return res.status(401).json({ message: "Authentication required" });
     }
     
-    const cartItems = await storage.getCartItems(req.user.id);
+    const cartItems = await storage.getCartItems(req.user._id);
     res.json(cartItems);
   });
 
@@ -86,7 +86,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     
     try {
       const cartData = insertCartItemSchema.parse(req.body);
-      const cartItem = await storage.createCartItem(req.user.id, cartData);
+      const cartItem = await storage.createCartItem(req.user._id, cartData);
       res.status(201).json(cartItem);
     } catch (error) {
       if (error instanceof z.ZodError) {

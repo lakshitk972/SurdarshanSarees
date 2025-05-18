@@ -1,7 +1,8 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
-import { seed } from "./seed";
+import { connectToMongoDB } from "./db-mongo";
+import { seedMongoDB } from "./seed-mongo";
 
 const app = express();
 app.use(express.json());
@@ -38,10 +39,17 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+  // Connect to MongoDB
   try {
-    await seed();
+    await connectToMongoDB();
   } catch (error) {
-    console.error("Error seeding database:", error);
+    console.error("Failed to connect to MongoDB:", error);
+  }
+
+  try {
+    await seedMongoDB();
+  } catch (error) {
+    console.error("Error seeding MongoDB database:", error);
   }
   
   const server = await registerRoutes(app);

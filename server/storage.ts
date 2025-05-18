@@ -81,6 +81,12 @@ export interface IStorage {
   createCustomOrderRequest(userId: number | null, request: InsertCustomOrderRequest): Promise<CustomOrderRequest>;
   updateCustomOrderRequestStatus(id: number, status: string): Promise<CustomOrderRequest | undefined>;
 
+  // Review operations
+  getProductReviews(productId: number): Promise<(Review & { username: string })[]>;
+  getReview(id: number): Promise<Review | undefined>;
+  createReview(review: InsertReview): Promise<Review>;
+  incrementHelpfulCount(id: number): Promise<Review | undefined>;
+
   // Session store
   sessionStore: session.Store;
 }
@@ -410,6 +416,46 @@ export class DatabaseStorage implements IStorage {
       .returning();
     
     return request;
+  }
+
+  // Review operations
+  async getProductReviews(productId: number): Promise<(Review & { username: string })[]> {
+    const result = await db
+      .select({
+        id: reviews.id,
+        productId: reviews.productId,
+        userId: reviews.userId,
+        rating: reviews.rating,
+        comment: reviews.comment,
+        helpfulCount: reviews.helpfulCount,
+        createdAt: reviews.createdAt,
+        username: users.username,
+      })
+      .from(reviews)
+      .innerJoin(users, eq(reviews.userId, users.id))
+      .where(eq(reviews.productId, productId))
+      .orderBy(desc(reviews.createdAt));
+    
+    return result;
+  }
+
+  async getReview(id: number): Promise<Review | undefined> {
+    const [review] = await db.select().from(reviews).where(eq(reviews.id, id));
+    return review;
+  }
+
+  async createReview(insertReview: InsertReview): Promise<Review> {
+    const [review] = await db.insert(reviews).values(insertReview).returning();
+    return review;
+  }
+
+  async incrementHelpfulCount(id: number): Promise<Review | undefined> {
+    const [review] = await db
+      .update(reviews)
+      .set({ helpfulCount: sql`${reviews.helpfulCount} + 1` })
+      .where(eq(reviews.id, id))
+      .returning();
+    return review;
   }
 }
 

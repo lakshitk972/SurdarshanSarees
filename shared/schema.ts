@@ -200,3 +200,29 @@ export type OrderItem = typeof orderItems.$inferSelect;
 
 export type InsertCustomOrderRequest = z.infer<typeof insertCustomOrderRequestSchema>;
 export type CustomOrderRequest = typeof customOrderRequests.$inferSelect;
+
+// Reviews schema
+export const reviews = pgTable("reviews", {
+  id: serial("id").primaryKey(),
+  productId: integer("product_id").references(() => products.id, { onDelete: "cascade" }),
+  userId: integer("user_id").references(() => users.id, { onDelete: "cascade" }),
+  rating: integer("rating").notNull(),
+  comment: text("comment").notNull(),
+  helpfulCount: integer("helpful_count").default(0).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const reviewsRelations = relations(reviews, ({ one }) => ({
+  product: one(products, { fields: [reviews.productId], references: [products.id] }),
+  user: one(users, { fields: [reviews.userId], references: [users.id] }),
+}));
+
+export const insertReviewSchema = createInsertSchema(reviews).pick({
+  productId: true,
+  userId: true,
+  rating: true,
+  comment: true,
+});
+
+export type InsertReview = z.infer<typeof insertReviewSchema>;
+export type Review = typeof reviews.$inferSelect;

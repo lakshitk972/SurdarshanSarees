@@ -10,10 +10,12 @@ import {
   ChevronRight, 
   Truck, 
   RefreshCcw, 
-  ShieldCheck
+  ShieldCheck,
+  Maximize
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "wouter";
+import { ImagePreviewModal } from "./image-preview-modal";
 
 interface ProductDetailsProps {
   product: Product;
@@ -24,6 +26,7 @@ export function ProductDetails({ product }: ProductDetailsProps) {
   const [currentImage, setCurrentImage] = useState(0);
   const [isZoomed, setIsZoomed] = useState(false);
   const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 });
+  const [previewOpen, setPreviewOpen] = useState(false);
   
   const { toast } = useToast();
   const { user } = useAuth();
@@ -63,12 +66,14 @@ export function ProductDetails({ product }: ProductDetailsProps) {
   };
   
   const nextImage = () => {
+    if (!product.imageUrls || product.imageUrls.length <= 1) return;
     setCurrentImage((prev) => 
       prev === product.imageUrls.length - 1 ? 0 : prev + 1
     );
   };
   
   const prevImage = () => {
+    if (!product.imageUrls || product.imageUrls.length <= 1) return;
     setCurrentImage((prev) => 
       prev === 0 ? product.imageUrls.length - 1 : prev - 1
     );
@@ -98,33 +103,47 @@ export function ProductDetails({ product }: ProductDetailsProps) {
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
       {/* Product Images */}
       <div className="space-y-4">
-        <div 
-          className="relative overflow-hidden bg-offwhite rounded-md h-[500px] cursor-zoom-in"
-          onClick={() => setIsZoomed(!isZoomed)}
-          onMouseMove={handleZoom}
-          onMouseLeave={() => setIsZoomed(false)}
-        >
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={currentImage}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="w-full h-full"
-            >
-              <div 
-                className="w-full h-full bg-center bg-no-repeat"
-                style={{
-                  backgroundImage: `url(${product.imageUrls[currentImage]})`,
-                  backgroundSize: isZoomed ? "150%" : "contain",
-                  backgroundPosition: isZoomed 
-                    ? `${zoomPosition.x}% ${zoomPosition.y}%` 
-                    : "center",
-                }}
-              />
-            </motion.div>
-          </AnimatePresence>
+        <div className="relative overflow-hidden bg-offwhite rounded-md h-[500px]">
+          <div 
+            className="w-full h-full cursor-zoom-in"
+            onClick={() => setIsZoomed(!isZoomed)}
+            onMouseMove={handleZoom}
+            onMouseLeave={() => setIsZoomed(false)}
+          >
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentImage}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                className="w-full h-full"
+              >
+                <div 
+                  className="w-full h-full bg-center bg-no-repeat"
+                  style={{
+                    backgroundImage: `url(${product.imageUrls?.[currentImage] || ''})`,
+                    backgroundSize: isZoomed ? "150%" : "contain",
+                    backgroundPosition: isZoomed 
+                      ? `${zoomPosition.x}% ${zoomPosition.y}%` 
+                      : "center",
+                  }}
+                />
+              </motion.div>
+            </AnimatePresence>
+          </div>
+          
+          {/* Full-screen preview button */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setPreviewOpen(true);
+            }}
+            className="absolute top-4 right-4 z-10 bg-white/70 backdrop-blur-sm hover:bg-white/90 text-charcoal p-2 rounded-full"
+            aria-label="View full screen"
+          >
+            <Maximize className="h-5 w-5" />
+          </button>
           
           {/* Navigation buttons */}
           <button
@@ -149,7 +168,7 @@ export function ProductDetails({ product }: ProductDetailsProps) {
         </div>
         
         {/* Thumbnails */}
-        {product.imageUrls.length > 1 && (
+        {product.imageUrls && product.imageUrls.length > 1 && (
           <div className="flex space-x-2 overflow-x-auto">
             {product.imageUrls.map((imageUrl, index) => (
               <button
@@ -167,6 +186,16 @@ export function ProductDetails({ product }: ProductDetailsProps) {
               </button>
             ))}
           </div>
+        )}
+        
+        {/* Image Preview Modal */}
+        {product.imageUrls && (
+          <ImagePreviewModal
+            images={product.imageUrls}
+            initialIndex={currentImage}
+            open={previewOpen}
+            onOpenChange={setPreviewOpen}
+          />
         )}
       </div>
       

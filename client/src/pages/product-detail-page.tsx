@@ -4,6 +4,7 @@ import { useParams } from "wouter";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { ProductDetails } from "@/components/products/product-details";
+import { CustomerReviews } from "@/components/products/customer-reviews";
 import { Breadcrumbs } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import { Product, Category } from "@shared/schema";
@@ -104,6 +105,11 @@ export default function ProductDetailPage() {
             </div>
             
             <ProductDetails product={product} />
+            
+            {/* Customer Reviews */}
+            <div className="mt-10 border-t border-gray-200 pt-10">
+              <CustomerReviews productId={product.id} />
+            </div>
             
             {/* Similar Products section can be added here */}
           </div>

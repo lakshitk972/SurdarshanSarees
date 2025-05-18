@@ -6,7 +6,12 @@ dotenv.config();
 
 export async function connectToMongoDB() {
   try {
-    const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/surdharshan';
+    const mongoUri = process.env.MONGODB_URI;
+    
+    if (!mongoUri) {
+      console.log('No MongoDB URI provided, using in-memory storage instead');
+      return;
+    }
     
     console.log('Attempting to connect to MongoDB...');
     
@@ -16,11 +21,17 @@ export async function connectToMongoDB() {
       return;
     }
 
-    await mongoose.connect(mongoUri);
+    // Set connection options for better stability
+    const options = {
+      serverSelectionTimeoutMS: 15000, // 15 seconds to select server
+      socketTimeoutMS: 45000, // 45 seconds to establish connection
+    };
+
+    await mongoose.connect(mongoUri, options);
     console.log('MongoDB connected successfully');
   } catch (error) {
     console.error('Failed to connect to MongoDB:', error);
-    throw error;
+    console.log('Using in-memory storage instead');
   }
 }
 
@@ -39,6 +50,8 @@ mongoose.connection.on('disconnected', () => {
 
 // Gracefully close the MongoDB connection when the Node process ends
 process.on('SIGINT', async () => {
-  await mongoose.connection.close();
+  if (mongoose.connection.readyState >= 1) {
+    await mongoose.connection.close();
+  }
   process.exit(0);
 });

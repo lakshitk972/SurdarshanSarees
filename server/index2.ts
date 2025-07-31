@@ -1,93 +1,131 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
-import { setupVite, serveStatic } from "./vite";
 import { connectToMongoDB } from "./db-mongo";
 import { seedMongoDB } from "./seed-mongo";
-import { createServer } from "http";
+import path from "path";
+import fs from "fs";
 
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-// Logging middleware
+// Basic logging for serverless
 app.use((req, res, next) => {
-  const start = Date.now();
-  res.on("finish", () => {
-    const duration = Date.now() - start;
-    if (req.path.startsWith("/api")) {
-      console.log(`${req.method} ${req.path} ${res.statusCode} in ${duration}ms`);
-    }
-  });
+  console.log(`${req.method} ${req.path}`);
   next();
 });
 
-// Database and routes initialization
+// Global state for serverless
 let isInitialized = false;
+let initializationPromise: Promise<void> | null = null;
 
 const initialize = async () => {
-  if (!isInitialized) {
+  if (isInitialized) return;
+  
+  if (initializationPromise) {
+    await initializationPromise;
+    return;
+  }
+
+  initializationPromise = (async () => {
     try {
+      console.log("Initializing serverless function...");
       await connectToMongoDB();
+      console.log("Database connected");
+      
       await seedMongoDB();
+      console.log("Database seeded");
+      
       await registerRoutes(app);
+      console.log("Routes registered");
+      
       isInitialized = true;
-      console.log("Server initialized successfully");
     } catch (error) {
       console.error("Initialization failed:", error);
+      initializationPromise = null;
+      throw error;
     }
+  })();
+
+  await initializationPromise;
+};
+
+// Root route
+app.get('/', async (req: Request, res: Response) => {
+  try {
+    res.json({
+      message: "SurdarshanSarees API",
+      status: "running",
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error("Root route error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// Serve static files for production
+const serveStaticFiles = () => {
+  const distPath = path.resolve(process.cwd(), "dist");
+  
+  if (fs.existsSync(distPath)) {
+    app.use(express.static(distPath));
+    
+    // SPA fallback
+    app.get('*', (req, res, next) => {
+      if (req.path.startsWith('/api')) {
+        return next();
+      }
+      
+      const indexPath = path.resolve(distPath, "public/index.html");
+      if (fs.existsSync(indexPath)) {
+        res.sendFile(indexPath);
+      } else {
+        next();
+      }
+    });
   }
 };
 
-// Error handler
-app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-  const status = err.status || err.statusCode || 500;
-  const message = err.message || "Internal Server Error";
-  res.status(status).json({ message });
-});
+// Setup static serving for production
+if (process.env.NODE_ENV === 'production') {
+  serveStaticFiles();
+}
 
-// Create HTTP server
-const server = createServer(app);
+// Error handler
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+  console.error("Error:", err);
+  res.status(500).json({ 
+    message: "Internal server error",
+    ...(process.env.NODE_ENV === 'development' && { error: err.message })
+  });
+});
 
 // For local development
 if (process.env.NODE_ENV !== "production") {
+  const { setupVite } = await import("./vite.js");
+  const { createServer } = await import("http");
+  
   (async () => {
+    const server = createServer(app);
     await initialize();
-    
-    // IMPORTANT: Use Vite dev server for development
     await setupVite(app, server);
     
     const port = 5000;
     server.listen(port, () => {
       console.log(`Development server running on port ${port}`);
-      console.log(`Frontend: http://localhost:${port}`);
-      console.log(`API: http://localhost:${port}/api`);
     });
   })();
 }
 
-// For Vercel deployment (production)
-let initializedApp: express.Application | null = null;
-
-const getProductionApp = async () => {
-  if (!initializedApp) {
-    await initialize();
-    
-    // IMPORTANT: Use static serving for production
-    serveStatic(app);
-    
-    initializedApp = app;
-  }
-  return initializedApp;
-};
-
-// Export for Vercel
-export default async (req: Request, res: Response) => {
+// Export for Vercel - this is the critical part
+export default async function handler(req: Request, res: Response) {
   try {
-    const app = await getProductionApp();
+    await initialize();
     return app(req, res);
   } catch (error) {
-    console.error("Server error:", error);
-    res.status(500).json({ message: "Internal server error" });
+    console.error("Handler error:", error);
+    res.status(500).json({ message: "Server initialization failed" });
   }
-};
+}

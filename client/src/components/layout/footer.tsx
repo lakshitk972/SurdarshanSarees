@@ -55,15 +55,15 @@ export function Footer() {
             <ul className="space-y-3">
               <li className="flex items-start">
                 <MapPin className="text-gold mt-1 mr-3 h-4 w-4" />
-                <span className="text-gray-400">123 Silk Road, Chennai, Tamil Nadu, India - 600001</span>
+                <span className="text-gray-400"> Nathdwara, Rajasthan, India - 313301</span>
               </li>
               <li className="flex items-center">
                 <Phone className="text-gold mr-3 h-4 w-4" />
-                <span className="text-gray-400">+91 98765 43210</span>
+                <span className="text-gray-400">+91 77270 59515</span>
               </li>
               <li className="flex items-center">
                 <Mail className="text-gold mr-3 h-4 w-4" />
-                <span className="text-gray-400">contact@surdharshansilks.com</span>
+                <span className="text-gray-400">contact@surdharshan.com</span>
               </li>
               <li className="flex items-center">
                 <Clock className="text-gold mr-3 h-4 w-4" />

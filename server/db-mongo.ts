@@ -6,29 +6,27 @@ dotenv.config();
 
 export async function connectToMongoDB() {
   try {
-    const mongoUri = process.env.MONGODB_URI;
-    
+    const mongoUri = process.env.MONGO_URI;
+
     if (!mongoUri) {
       console.log('No MongoDB URI provided, using in-memory storage instead');
       return;
     }
-    
-    console.log('Attempting to connect to MongoDB...');
-    
-    // Check if we already have a connection
+
+    // Check if already connected
     if (mongoose.connection.readyState >= 1) {
       console.log('MongoDB is already connected');
       return;
     }
 
-    // Set connection options for better stability
     const options = {
-      serverSelectionTimeoutMS: 15000, // 15 seconds to select server
-      socketTimeoutMS: 45000, // 45 seconds to establish connection
+      serverSelectionTimeoutMS: 15000,
+      socketTimeoutMS: 45000,
     };
 
+    console.log(`Connecting to MongoDB`);
     await mongoose.connect(mongoUri, options);
-    console.log('MongoDB connected successfully');
+    console.log("MongoDB connected successfully!");
   } catch (error) {
     console.error('Failed to connect to MongoDB:', error);
     console.log('Using in-memory storage instead');
@@ -37,15 +35,15 @@ export async function connectToMongoDB() {
 
 // Handle connection events
 mongoose.connection.on('connected', () => {
-  console.log('MongoDB connected');
+  console.log('MongoDB connection event: connected');
 });
 
 mongoose.connection.on('error', (err) => {
-  console.error(`MongoDB connection error: ${err}`);
+  console.error(`MongoDB connection event: error - ${err}`);
 });
 
 mongoose.connection.on('disconnected', () => {
-  console.log('MongoDB disconnected');
+  console.log('MongoDB connection event: disconnected');
 });
 
 // Gracefully close the MongoDB connection when the Node process ends

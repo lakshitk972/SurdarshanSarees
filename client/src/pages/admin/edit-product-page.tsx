@@ -28,11 +28,14 @@ export default function EditProductPage() {
       const res = await fetch("/api/admin/products");
       if (!res.ok) throw new Error("Failed to fetch products");
       const products: Product[] = await res.json();
-      const product = products.find(p => p.id === parseInt(id!));
+      const product = products.find(p => p._id.toString() === id);
       if (!product) throw new Error("Product not found");
       return product;
     },
     enabled: !!id,
+    staleTime: 0,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true
   });
   
   const breadcrumbItems = [
@@ -48,7 +51,7 @@ export default function EditProductPage() {
       return await res.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/products"] });
+      queryClient.removeQueries({ queryKey: ["/api/admin/products"] });
       toast({
         title: "Product updated",
         description: "The product has been updated successfully",
@@ -70,7 +73,7 @@ export default function EditProductPage() {
   
   if (isLoading) {
     return (
-      <div className="flex flex-col min-h-screen">
+      <div className="flex flex-col min-h-screen"> 
         <Header />
         
         <main className="flex-grow py-8 bg-offwhite">

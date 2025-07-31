@@ -44,11 +44,12 @@ export function ProductList() {
   });
   
   const deleteProductMutation = useMutation({
-    mutationFn: async (id: number) => {
+    mutationFn: async (id: String) => {
+      console.log(id)
       await apiRequest("DELETE", `/api/admin/products/${id}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/products"] });
+      queryClient.removeQueries({ queryKey: ["/api/admin/products"] });
       toast({
         title: "Product deleted",
         description: "The product has been deleted successfully",
@@ -66,7 +67,8 @@ export function ProductList() {
   
   const handleDeleteProduct = () => {
     if (productToDelete) {
-      deleteProductMutation.mutate(productToDelete.id);
+      console.log(productToDelete._id)
+      deleteProductMutation.mutate(productToDelete._id);
     }
   };
   
@@ -169,7 +171,7 @@ export function ProductList() {
             </TableHeader>
             <TableBody>
               {filteredProducts.map((product) => (
-                <TableRow key={product.id}>
+                <TableRow key={product._id}>
                   <TableCell className="font-medium">
                     <div className="flex items-center space-x-3">
                       {product.imageUrls && product.imageUrls.length > 0 ? (
@@ -202,9 +204,9 @@ export function ProductList() {
                   <TableCell>{product.categoryId}</TableCell>
                   <TableCell>
                     {product.inStock ? (
-                      <Badge className="bg-emerald text-white hover:bg-emerald">In Stock</Badge>
+                      <Badge className="bg-emerald text-gray hover:bg-emerald">In Stock</Badge>
                     ) : (
-                      <Badge variant="outline" className="text-gray-500">Out of Stock</Badge>
+                      <Badge variant="outline" className="text-red-500">Out of Stock</Badge>
                     )}
                   </TableCell>
                   <TableCell className="text-right">
@@ -223,12 +225,13 @@ export function ProductList() {
                           </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem
-                          onClick={() => navigate(`/admin/products/edit/${product.id}`)}
+                          onClick={() => navigate(`/admin/products/edit/${product._id}`)}
                         >
                           <Edit className="mr-2 h-4 w-4" /> Edit
                         </DropdownMenuItem>
                         <DropdownMenuItem
-                          onClick={() => setProductToDelete(product)}
+                          onClick={() =>
+                            setProductToDelete(product)}
                           className="text-red-500 focus:text-red-500"
                         >
                           <Trash className="mr-2 h-4 w-4" /> Delete
@@ -249,7 +252,7 @@ export function ProductList() {
           <DialogHeader>
             <DialogTitle>Delete Product</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete "{productToDelete?.name}"? This action cannot be undone.
+              Are you sure you want to delete <b>"{productToDelete?.name}"</b>? This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>

@@ -208,7 +208,7 @@ export default function DashboardPage() {
                     ) : (
                       <div className="space-y-4">
                         {recentProducts.map((product) => (
-                          <div key={product.id} className="flex items-center justify-between border-b pb-4 last:border-b-0 last:pb-0">
+                          <div key={product._id} className="flex items-center justify-between border-b pb-4 last:border-b-0 last:pb-0">
                             <div className="flex items-center">
                               {product.imageUrls && product.imageUrls.length > 0 ? (
                                 <div className="w-12 h-12 rounded-md overflow-hidden bg-offwhite mr-4">
@@ -230,7 +230,7 @@ export default function DashboardPage() {
                                 </p>
                               </div>
                             </div>
-                            <Link href={`/admin/products/edit/${product.id}`}>
+                            <Link href={`/admin/products/edit/${product._id}`}>
                               <a className="text-maroon hover:text-maroon-dark flex items-center text-sm">
                                 Edit <ArrowRight className="ml-1 h-4 w-4" />
                               </a>
@@ -265,7 +265,7 @@ export default function DashboardPage() {
                     ) : (
                       <div className="space-y-4">
                         {recentCustomOrders.map((order) => (
-                          <div key={order.id} className="border-b pb-4 last:border-b-0 last:pb-0">
+                          <div key={order._id} className="border-b pb-4 last:border-b-0 last:pb-0">
                             <div className="flex items-center justify-between mb-2">
                               <h3 className="font-medium">{order.name}</h3>
                               <span className={`text-xs px-2.5 py-0.5 rounded-full ${

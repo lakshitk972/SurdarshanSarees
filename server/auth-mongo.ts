@@ -45,21 +45,6 @@ export function setupAuth(app: Express) {
   app.use(passport.initialize());
   app.use(passport.session());
 
-  passport.use(
-    new LocalStrategy(async (username, password, done) => {
-      try {
-        const user = await User.findOne({ username }).lean();
-        if (!user || !(await comparePasswords(password, user.password))) {
-          return done(null, false);
-        } else {
-          return done(null, user);
-        }
-      } catch (err) {
-        return done(err);
-      }
-    }),
-  );
-
   passport.serializeUser((user, done) => done(null, user._id));
   passport.deserializeUser(async (id: string, done) => {
     try {
@@ -69,6 +54,31 @@ export function setupAuth(app: Express) {
       done(err);
     }
   });
+
+  // Configure LocalStrategy
+  passport.use(new LocalStrategy(
+    {
+      usernameField: 'username',
+      passwordField: 'password'
+    },
+    async (username, password, done) => {
+      try {
+        const user = await User.findOne({ username });
+        if (!user) {
+          return done(null, false, { message: 'Incorrect username.' });
+        }
+
+        const isValid = await comparePasswords(password, user.password);
+        if (!isValid) {
+          return done(null, false, { message: 'Incorrect password.' });
+        }
+
+        return done(null, user);
+      } catch (error) {
+        return done(error);
+      }
+    }
+  ));
 
   app.post("/api/register", async (req, res, next) => {
     try {

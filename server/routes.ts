@@ -101,7 +101,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       return res.status(401).json({ message: "Authentication required" });
     }
     
-    const cartItem = await storage.getCartItem(parseInt(req.params.id));
+    const cartItem = await storage.getCartItem(req.params.id);
     if (!cartItem) {
       return res.status(404).json({ message: "Cart item not found" });
     }
@@ -110,7 +110,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       return res.status(403).json({ message: "Access denied" });
     }
     
-    const updatedItem = await storage.updateCartItem(parseInt(req.params.id), req.body);
+    const updatedItem = await storage.updateCartItem(req.params.id, req.body);
     res.json(updatedItem);
   });
 
@@ -119,7 +119,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       return res.status(401).json({ message: "Authentication required" });
     }
     
-    const cartItem = await storage.getCartItem(parseInt(req.params.id));
+    const cartItem = await storage.getCartItem(req.params.id);
     if (!cartItem) {
       return res.status(404).json({ message: "Cart item not found" });
     }
@@ -128,7 +128,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       return res.status(403).json({ message: "Access denied" });
     }
     
-    await storage.deleteCartItem(parseInt(req.params.id));
+    await storage.deleteCartItem(req.params.id);
     res.status(204).send();
   });
 
@@ -176,7 +176,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   app.put("/api/admin/products/:id", async (req, res) => {
-    const productId = parseInt(req.params.id);
+    const productId = (req.params.id);
     const product = await storage.getProduct(productId);
     
     if (!product) {
@@ -195,7 +195,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   app.delete("/api/admin/products/:id", async (req, res) => {
-    const productId = parseInt(req.params.id);
+    const productId = req.params.id;
+    console.log(productId + " server")
     const product = await storage.getProduct(productId);
     
     if (!product) {
@@ -212,7 +213,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   app.put("/api/admin/custom-orders/:id/status", async (req, res) => {
-    const orderId = parseInt(req.params.id);
+    const orderId = req.params.id;
     const { status } = req.body;
     
     if (!status) {

@@ -18,6 +18,9 @@ import {
   ICustomOrderRequest,
   IReview
 } from "./models";
+import dotenv from 'dotenv';
+// Load environment variables from .env file
+dotenv.config();
 
 export interface IStorage {
   // User operations
@@ -84,7 +87,7 @@ export class MongoDBStorage implements IStorage {
 
   constructor() {
     this.sessionStore = MongoStore.create({
-      mongoUrl: process.env.MONGODB_URI || 'mongodb://localhost:27017/surdharshan',
+      mongoUrl: process.env.MONGODB_URI,
       collectionName: "sessions",
       ttl: 60 * 60 * 24 * 7, // 1 week
     });

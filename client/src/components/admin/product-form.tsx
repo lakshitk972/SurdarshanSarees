@@ -26,6 +26,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Product, insertProductSchema, Category } from "@shared/schema";
 import { Loader2 } from "lucide-react";
+import { on } from "events";
 
 // Extend the product schema for validation
 const productSchema = insertProductSchema.extend({
@@ -112,7 +113,7 @@ export function ProductForm({
   };
   
   // Filter out empty image URLs before submission
-  const handleFormSubmit = (data: ProductFormValues) => {
+  const handleFormSubmit = (data: FormData) => {
     // Filter out empty image URLs
     const filteredImageUrls = (data.imageUrls || []).filter(url => url.trim() !== "");
     
@@ -214,20 +215,28 @@ export function ProductForm({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {categories.map((category) => (
-                          <SelectItem 
-                            key={category.id} 
-                            value={category.id.toString()}
-                          >
-                            {category.name}
-                          </SelectItem>
-                        ))}
+                        {categories.map((category, index) => {
+                          // Use index as fallback if category.id is not available
+                          const value = category._id?.toString() || `temp-${index}`;
+                          
+                          return (
+                            <SelectItem 
+                              key={category._id || `category-${index}`} 
+                              value={value}
+                              disabled={!category._id} // Disable if no valid ID
+                            >
+                              {category.name}
+                              {!category._id && " (Invalid)"}
+                            </SelectItem>
+                          );
+                        })}
                       </SelectContent>
                     </Select>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+
               
               <FormField
                 control={form.control}
@@ -407,7 +416,10 @@ export function ProductForm({
         </Tabs>
         
         <div className="flex justify-end">
-          <Button type="submit" className="bg-maroon hover:bg-maroon-dark" disabled={isSubmitting}>
+          <Button type="submit" className="bg-maroon hover:bg-maroon-dark" disabled={isSubmitting} onClick={() =>{
+            // console.log("Form submitted with values:", form.getValues()),
+            onSubmit(form.getValues());
+          }}>
             {isSubmitting ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />

@@ -17,7 +17,7 @@ import {
   IOrderItem,
   ICustomOrderRequest,
   IReview
-} from "./models";
+} from "./models/model";
 import dotenv from 'dotenv';
 // Load environment variables from .env file
 dotenv.config();

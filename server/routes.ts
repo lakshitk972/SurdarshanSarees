@@ -1,8 +1,8 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
-import { storage } from "./storage-mongo";
-import { setupAuth } from "./auth-mongo";
-import { insertProductSchema, insertCartItemSchema, insertCustomOrderRequestSchema } from "@shared/schema";
+import { storage } from "./storage-mongo.js";
+import { setupAuth } from "./auth-mongo.js";
+import { insertProductSchema, insertCartItemSchema, insertCustomOrderRequestSchema } from "@shared/schema.js";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {

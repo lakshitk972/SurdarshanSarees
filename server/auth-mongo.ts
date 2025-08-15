@@ -4,8 +4,8 @@ import { Express } from "express";
 import session from "express-session";
 import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
-import { User, IUser } from "./models";
-import { storage } from "./storage-mongo";
+import { User, IUser } from "./models/model.js"
+import { storage } from "./storage-mongo.js";
 
 declare global {
   namespace Express {

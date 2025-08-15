@@ -1,6 +1,6 @@
 import { scrypt, randomBytes } from "crypto";
 import { promisify } from "util";
-import { User, Category, Product } from "./models";
+import { User, Category, Product } from "./models/model";
 
 const scryptAsync = promisify(scrypt);
 
